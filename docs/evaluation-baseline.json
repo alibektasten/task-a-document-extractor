@@ -1,0 +1,168 @@
+{
+  "documents": 14,
+  "exact_business_documents": 14,
+  "exact_business_accuracy": 1.0,
+  "fields": {
+    "doc_type": {
+      "correct": 14,
+      "total": 14,
+      "hallucinations": 0,
+      "omissions": 0,
+      "wrong_values": 0,
+      "populated_correct": 14,
+      "populated_total": 14,
+      "accuracy": 1.0,
+      "populated_accuracy": 1.0
+    },
+    "supplier_name": {
+      "correct": 14,
+      "total": 14,
+      "hallucinations": 0,
+      "omissions": 0,
+      "wrong_values": 0,
+      "populated_correct": 10,
+      "populated_total": 10,
+      "accuracy": 1.0,
+      "populated_accuracy": 1.0
+    },
+    "supplier_bin": {
+      "correct": 14,
+      "total": 14,
+      "hallucinations": 0,
+      "omissions": 0,
+      "wrong_values": 0,
+      "populated_correct": 3,
+      "populated_total": 3,
+      "accuracy": 1.0,
+      "populated_accuracy": 1.0
+    },
+    "doc_number": {
+      "correct": 14,
+      "total": 14,
+      "hallucinations": 0,
+      "omissions": 0,
+      "wrong_values": 0,
+      "populated_correct": 11,
+      "populated_total": 11,
+      "accuracy": 1.0,
+      "populated_accuracy": 1.0
+    },
+    "doc_date": {
+      "correct": 14,
+      "total": 14,
+      "hallucinations": 0,
+      "omissions": 0,
+      "wrong_values": 0,
+      "populated_correct": 9,
+      "populated_total": 9,
+      "accuracy": 1.0,
+      "populated_accuracy": 1.0
+    },
+    "currency": {
+      "correct": 14,
+      "total": 14,
+      "hallucinations": 0,
+      "omissions": 0,
+      "wrong_values": 0,
+      "populated_correct": 10,
+      "populated_total": 10,
+      "accuracy": 1.0,
+      "populated_accuracy": 1.0
+    },
+    "total_amount": {
+      "correct": 14,
+      "total": 14,
+      "hallucinations": 0,
+      "omissions": 0,
+      "wrong_values": 0,
+      "populated_correct": 8,
+      "populated_total": 8,
+      "accuracy": 1.0,
+      "populated_accuracy": 1.0
+    },
+    "vat_amount": {
+      "correct": 14,
+      "total": 14,
+      "hallucinations": 0,
+      "omissions": 0,
+      "wrong_values": 0,
+      "populated_correct": 4,
+      "populated_total": 4,
+      "accuracy": 1.0,
+      "populated_accuracy": 1.0
+    },
+    "line_items": {
+      "correct": 14,
+      "total": 14,
+      "hallucinations": 0,
+      "omissions": 0,
+      "wrong_values": 0,
+      "populated_correct": 14,
+      "populated_total": 14,
+      "accuracy": 1.0,
+      "populated_accuracy": 1.0
+    },
+    "field_confidence": {
+      "correct": 14,
+      "total": 14,
+      "hallucinations": 0,
+      "omissions": 0,
+      "wrong_values": 0,
+      "populated_correct": 14,
+      "populated_total": 14,
+      "accuracy": 1.0,
+      "populated_accuracy": 1.0
+    },
+    "warnings": {
+      "correct": 14,
+      "total": 14,
+      "hallucinations": 0,
+      "omissions": 0,
+      "wrong_values": 0,
+      "populated_correct": 14,
+      "populated_total": 14,
+      "accuracy": 1.0,
+      "populated_accuracy": 1.0
+    },
+    "line_items[].name": {
+      "correct": 10,
+      "total": 10,
+      "hallucinations": 0,
+      "omissions": 0,
+      "wrong_values": 0,
+      "populated_correct": 10,
+      "populated_total": 10,
+      "accuracy": 1.0,
+      "populated_accuracy": 1.0
+    },
+    "line_items[].qty": {
+      "correct": 10,
+      "total": 10,
+      "hallucinations": 0,
+      "omissions": 0,
+      "wrong_values": 0,
+      "populated_correct": 6,
+      "populated_total": 6,
+      "accuracy": 1.0,
+      "populated_accuracy": 1.0
+    },
+    "line_items[].price": {
+      "correct": 10,
+      "total": 10,
+      "hallucinations": 0,
+      "omissions": 0,
+      "wrong_values": 0,
+      "populated_correct": 9,
+      "populated_total": 9,
+      "accuracy": 1.0,
+      "populated_accuracy": 1.0
+    }
+  },
+  "hallucinations": 0,
+  "omissions": 0,
+  "extra_line_items": 0,
+  "missing_line_items": 0,
+  "pipeline_failures": [],
+  "differences": [],
+  "backend": "mock"
+}
