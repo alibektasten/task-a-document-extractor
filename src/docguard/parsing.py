@@ -4,7 +4,7 @@ import re
 from dataclasses import dataclass, field
 from typing import Any
 
-from .normalize import CURRENCY, DATE, NUM, calendar_date, currencies, money, number
+from .normalize import DATE, NUM, calendar_date, currencies, money, number
 
 DOC_HEADER = re.compile(r"^(?:сч[её]т(?:\s+на\s+оплату|-фактура)?|шот[- ]фактура|акт\b|коммерческое предложение)", re.I)
 BUYER = re.compile(r"^(?:покупатель|заказчик|получатель|сатып алушы)\b", re.I)
@@ -105,14 +105,20 @@ def parse_line(field_name: str, raw: str) -> Parsed:
                 out.warnings.append("INVALID_DATE: impossible calendar date; ignored")
     elif field_name == "currency":
         # Do not read currency symbols from arbitrary prose or prompt instructions.
-        if TOTAL.match(line) or re.match(r"^(?:валюта|валютасы)\s*:", lower) or re.match(r"^[-•]\s", line) or len(re.split(r"\t+| {2,}", line)) in (3, 4):
+        try:
+            item = _line_item(line)
+        except ValueError:
+            item = None
+        if TOTAL.match(line) or re.match(r"^(?:валюта|валютасы)\s*:", lower) or item:
             out.hits.extend(Hit(value) for value in currencies(line))
     elif field_name == "total_amount":
         match = TOTAL.match(line)
         if match:
             try:
                 priority = 2 if "оплате" in match.group(1).lower() else 1
-                out.hits.append(Hit(money(match.group(2)), priority, 0.90 if re.search(r"[а-яәіңғүұқөһ]", match.group(2), re.I) and not re.match(r"[0-9]", match.group(2)) else 0.95))
+                spelled_out = not re.match(r"[0-9]", match.group(2))
+                confidence = 0.90 if spelled_out else 0.95
+                out.hits.append(Hit(money(match.group(2)), priority, confidence))
             except ValueError:
                 out.warnings.append("INVALID_TOTAL: unsupported or damaged amount; left null")
     elif field_name == "vat_amount":
