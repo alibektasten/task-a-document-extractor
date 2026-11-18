@@ -8,9 +8,11 @@ An evidence-grounded CLI for extracting invoices, commercial offers, and acts in
 
 Prerequisite: **Python 3.11 or 3.12** with `venv` and `pip` (verified locally with Python 3.12). The commands below use `python3.12`; use `python3.11` if that is your installed version. Internet is needed only to install dependencies; the default backend then works offline.
 
-After cloning the repository or extracting the archive, open a terminal inside `task-a-document-extractor` and run:
+Clone the repository and run the following commands. If using the ZIP, skip the `git clone` step and open the extracted project folder first.
 
 ```bash
+git clone https://github.com/alibektasten/task-a-document-extractor.git
+cd task-a-document-extractor
 python3.12 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
@@ -141,7 +143,7 @@ docs/             Requirement mapping, verification, baseline report
 REFLECTION.md     Tradeoffs, AI disclosure, and architecture answer
 ```
 
-The external runtime dependency is Pydantic; tests use the Python standard library. Dependency versions are pinned. CI runs the same tests and evaluation on Python 3.11/3.12 when the repository is pushed to GitHub; this local delivery does not claim a completed hosted CI run.
+The external runtime dependency is Pydantic; tests use the Python standard library. Dependency versions are pinned. CI runs the same tests and evaluation on Python 3.11/3.12 when the repository is pushed to GitHub; current results are available in [GitHub Actions](https://github.com/alibektasten/task-a-document-extractor/actions).
 
 ## Scope, limitations, and next work
 
@@ -151,7 +153,7 @@ Context remains limited to recognized role markers and line layouts: unfamiliar 
 
 With more time, prioritize a separately annotated, unseen dataset, a live-model comparison, better role/span evidence, and calibrated abstention thresholds; then extend normalization based on measured errors. There is no reason to add infrastructure before measuring those failure modes.
 
-This implementation and documentation were created with AI assistance. Commit history records actual stages and uses an explicit Codex author; no candidate work history or human-only authorship is implied. Review the code and reflection before submitting and be prepared to explain and modify it. The archive includes `.git`; a public remote has not been created and no submission email has been sent.
+This implementation and documentation were created with AI assistance. Commit history records actual stages and uses an explicit Codex author; no candidate work history or human-only authorship is implied. Review the code and reflection before submitting and be prepared to explain and modify it. The public repository is [alibektasten/task-a-document-extractor](https://github.com/alibektasten/task-a-document-extractor). The archive includes `.git`; no submission email has been sent.
 
 ## Technical references
 

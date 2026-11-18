@@ -35,4 +35,4 @@ The full machine-readable result is [evaluation-baseline.json](evaluation-baseli
 python eval.py --report docs/evaluation-baseline.json
 ```
 
-**Not verified:** live Ollama model quality or latency, hosted GitHub CI, Windows, Linux, Python 3.11 locally, or production throughput. CI configuration covers Python 3.11 and 3.12 on Linux when subsequently run. No benchmark result here should be presented as real-model performance or unseen-document accuracy.
+**Outside this local verification record:** live Ollama model quality or latency, Windows, Linux, Python 3.11 locally, or production throughput. Hosted CI covers Python 3.11 and 3.12 on Linux; its current status is tracked separately in [GitHub Actions](https://github.com/alibektasten/task-a-document-extractor/actions). No benchmark result here should be presented as real-model performance or unseen-document accuracy.

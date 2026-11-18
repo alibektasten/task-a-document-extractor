@@ -18,6 +18,6 @@
 | Reflection: five questions, 10–15 sentences | 12 sentences in the main reflection; explicit AI assistance disclosure |
 | Architecture question: 5–10 sentences | 8 sentences in the architecture section; 300k docs/month and 0.50 KZT/doc budget |
 | Meaningful commit history | Actual staged local commits in `.git`, included in the delivery ZIP |
-| Submission format | Local repository and ZIP with `.git` prepared; publishing or emailing is left to the applicant |
+| Submission format | [Public GitHub repository](https://github.com/alibektasten/task-a-document-extractor) and ZIP with `.git`; submission email is left to the applicant |
 
 Task B, a user interface, and production infrastructure are intentionally outside scope.
