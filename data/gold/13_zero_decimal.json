@@ -1,0 +1,29 @@
+{
+  "doc_type": "act",
+  "supplier_name": "Zero Lab",
+  "supplier_bin": null,
+  "doc_number": "Z-13",
+  "doc_date": "2026-11-17",
+  "currency": "USD",
+  "total_amount": 0,
+  "vat_amount": 0,
+  "line_items": [
+    {
+      "name": "Бесплатная настройка",
+      "qty": 0,
+      "price": 0
+    }
+  ],
+  "field_confidence": {
+    "doc_type": 0.95,
+    "supplier_name": 0.95,
+    "supplier_bin": 0.0,
+    "doc_number": 0.95,
+    "doc_date": 0.95,
+    "currency": 0.95,
+    "total_amount": 0.95,
+    "vat_amount": 0.95,
+    "line_items": 0.95
+  },
+  "warnings": []
+}

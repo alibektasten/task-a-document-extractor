@@ -1,0 +1,25 @@
+{
+  "doc_type": "invoice",
+  "supplier_name": "Euro Labs",
+  "supplier_bin": null,
+  "doc_number": "FX-9",
+  "doc_date": "2026-11-14",
+  "currency": null,
+  "total_amount": 120,
+  "vat_amount": null,
+  "line_items": [],
+  "field_confidence": {
+    "doc_type": 0.95,
+    "supplier_name": 0.95,
+    "supplier_bin": 0.0,
+    "doc_number": 0.95,
+    "doc_date": 0.95,
+    "currency": 0.0,
+    "total_amount": 0.95,
+    "vat_amount": 0.0,
+    "line_items": 0.0
+  },
+  "warnings": [
+    "CONFLICT:currency: multiple distinct values; applied documented selection rule"
+  ]
+}

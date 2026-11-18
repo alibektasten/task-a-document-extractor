@@ -1,0 +1,26 @@
+{
+  "doc_type": "invoice",
+  "supplier_name": "ТОО \"Две Версии\"",
+  "supplier_bin": null,
+  "doc_number": "C-8",
+  "doc_date": "2026-11-01",
+  "currency": "KZT",
+  "total_amount": 10000,
+  "vat_amount": 1600,
+  "line_items": [],
+  "field_confidence": {
+    "doc_type": 0.95,
+    "supplier_name": 0.95,
+    "supplier_bin": 0.0,
+    "doc_number": 0.95,
+    "doc_date": 0.5,
+    "currency": 0.95,
+    "total_amount": 0.5,
+    "vat_amount": 0.95,
+    "line_items": 0.0
+  },
+  "warnings": [
+    "CONFLICT:doc_date: multiple distinct values; applied documented selection rule",
+    "CONFLICT:total_amount: multiple distinct values; applied documented selection rule"
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "doc_type": "unknown",
+  "supplier_name": null,
+  "supplier_bin": null,
+  "doc_number": null,
+  "doc_date": null,
+  "currency": null,
+  "total_amount": null,
+  "vat_amount": null,
+  "line_items": [],
+  "field_confidence": {
+    "doc_type": 0.0,
+    "supplier_name": 0.0,
+    "supplier_bin": 0.0,
+    "doc_number": 0.0,
+    "doc_date": 0.0,
+    "currency": 0.0,
+    "total_amount": 0.0,
+    "vat_amount": 0.0,
+    "line_items": 0.0
+  },
+  "warnings": []
+}

@@ -1,0 +1,27 @@
+{
+  "doc_type": "invoice",
+  "supplier_name": "ТОО \"OCR Тест\"",
+  "supplier_bin": null,
+  "doc_number": "OCR-7",
+  "doc_date": null,
+  "currency": "KZT",
+  "total_amount": null,
+  "vat_amount": null,
+  "line_items": [],
+  "field_confidence": {
+    "doc_type": 0.95,
+    "supplier_name": 0.95,
+    "supplier_bin": 0.0,
+    "doc_number": 0.95,
+    "doc_date": 0.0,
+    "currency": 0.95,
+    "total_amount": 0.0,
+    "vat_amount": 0.0,
+    "line_items": 0.0
+  },
+  "warnings": [
+    "INVALID_BIN: ambiguous OCR or non-12-digit BIN; left null",
+    "INVALID_DATE: impossible calendar date; ignored",
+    "INVALID_TOTAL: unsupported or damaged amount; left null"
+  ]
+}

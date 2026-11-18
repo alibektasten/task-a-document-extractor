@@ -1,0 +1,29 @@
+{
+  "doc_type": "act",
+  "supplier_name": null,
+  "supplier_bin": null,
+  "doc_number": "M-1",
+  "doc_date": null,
+  "currency": null,
+  "total_amount": null,
+  "vat_amount": null,
+  "line_items": [
+    {
+      "name": "Аудит",
+      "qty": null,
+      "price": null
+    }
+  ],
+  "field_confidence": {
+    "doc_type": 0.95,
+    "supplier_name": 0.0,
+    "supplier_bin": 0.0,
+    "doc_number": 0.95,
+    "doc_date": 0.0,
+    "currency": 0.0,
+    "total_amount": 0.0,
+    "vat_amount": 0.0,
+    "line_items": 0.95
+  },
+  "warnings": []
+}

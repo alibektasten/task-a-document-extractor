@@ -1,0 +1,128 @@
+[
+  {
+    "id": "01_invoice",
+    "source": "assignment",
+    "tags": [
+      "ru",
+      "payable_vs_subtotal"
+    ]
+  },
+  {
+    "id": "02_offer",
+    "source": "assignment",
+    "tags": [
+      "ru",
+      "expiry_vs_issue",
+      "no_derived_total"
+    ]
+  },
+  {
+    "id": "03_kazakh_ocr",
+    "source": "assignment",
+    "tags": [
+      "hard",
+      "kk_ru",
+      "word_amount",
+      "ocr_bin"
+    ]
+  },
+  {
+    "id": "04_missing",
+    "source": "authored",
+    "tags": [
+      "hard",
+      "missing_fields",
+      "missing_item_numbers"
+    ]
+  },
+  {
+    "id": "05_russian_words",
+    "source": "authored",
+    "tags": [
+      "hard",
+      "ru",
+      "word_amount",
+      "leading_zero_bin",
+      "explicit_zero_vat"
+    ]
+  },
+  {
+    "id": "06_bilingual",
+    "source": "authored",
+    "tags": [
+      "hard",
+      "kk_ru",
+      "rate_without_vat_amount"
+    ]
+  },
+  {
+    "id": "07_damaged",
+    "source": "authored",
+    "tags": [
+      "hard",
+      "ocr",
+      "invalid_calendar_date",
+      "damaged_amount"
+    ]
+  },
+  {
+    "id": "08_conflicts",
+    "source": "authored",
+    "tags": [
+      "hard",
+      "conflicting_dates",
+      "conflicting_totals"
+    ]
+  },
+  {
+    "id": "09_currency_conflict",
+    "source": "authored",
+    "tags": [
+      "hard",
+      "currency_conflict"
+    ]
+  },
+  {
+    "id": "10_buyer_bin",
+    "source": "authored",
+    "tags": [
+      "hard",
+      "buyer_vs_supplier"
+    ]
+  },
+  {
+    "id": "11_expiry_only",
+    "source": "authored",
+    "tags": [
+      "hard",
+      "expiry_only",
+      "no_derived_total"
+    ]
+  },
+  {
+    "id": "12_instructions_in_document",
+    "source": "authored",
+    "tags": [
+      "hard",
+      "untrusted_instructions",
+      "missing_fields"
+    ]
+  },
+  {
+    "id": "13_zero_decimal",
+    "source": "authored",
+    "tags": [
+      "zero_is_not_missing",
+      "iso_date",
+      "decimal_comma"
+    ]
+  },
+  {
+    "id": "14_unknown",
+    "source": "authored",
+    "tags": [
+      "unknown_document",
+      "all_missing"
+    ]
+  }
+]
