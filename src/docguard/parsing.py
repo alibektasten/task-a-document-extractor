@@ -6,10 +6,19 @@ from typing import Any
 
 from .normalize import DATE, NUM, calendar_date, currencies, money, number
 
-DOC_HEADER = re.compile(r"^(?:сч[её]т(?:\s+на\s+оплату|-фактура)?|шот[- ]фактура|акт\b|коммерческое предложение)", re.I)
+DOC_HEADER = re.compile(r"^(?:сч[её]т(?:\s+на\s+оплату|-фактура)?|шот[- ]фактура|акт|коммерческое предложение)\b", re.I)
 BUYER = re.compile(r"^(?:покупатель|заказчик|получатель|сатып алушы)\b", re.I)
 SUPPLIER = re.compile(r"^(?:поставщик|исполнитель|жеткізуші)\s*:\s*(.+)$", re.I)
 TOTAL = re.compile(r"^(всего к оплате|к оплате|итого(?: к оплате)?|общая сумма|жалпы сомасы)\s*:\s*(.+)$", re.I)
+NON_ITEM = re.compile(
+    r"^(?:поставщик|исполнитель|жеткізуші|покупатель|заказчик|получатель|сатып алушы|"
+    r"БИН|БСН|НДС|ҚҚС|без НДС|наименование|валюта|валютасы|дата|составлено|"
+    r"ТОО|ЖШС|ИП|LLP|LLC|от компании)\b", re.I,
+)
+DATE_ROLE = re.compile(
+    r"(?P<issue>составлено|дата документа|дата составления|дата акта|дата сч[её]та)|"
+    r"(?P<other>действительно до|срок\b|оплатить до|дейін|договор(?:а|у|ом)?\b)", re.I,
+)
 
 
 @dataclass(frozen=True)
@@ -23,6 +32,12 @@ class Hit:
 class Parsed:
     hits: list[Hit] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
+
+
+@dataclass(frozen=True)
+class ParsedItem:
+    value: dict
+    monetary_text: str
 
 
 def buyer_lines(lines: list[str]) -> set[int]:
@@ -40,23 +55,33 @@ def buyer_lines(lines: list[str]) -> set[int]:
     return result
 
 
-def _line_item(line: str) -> dict | None:
+def _line_item(line: str) -> ParsedItem | None:
+    if DOC_HEADER.match(line) or TOTAL.match(line) or NON_ITEM.match(line):
+        return None
+    # Parse delimited rows before whitespace tables: visual padding is not a cell.
+    service = re.fullmatch(rf"(.+?)\s+[-—–]\s+({NUM})\s*(?:ед\.?|шт\.?)\s+[-—–]\s+(.+)", line)
+    if service:
+        return ParsedItem(
+            {"name": service.group(1), "qty": number(service.group(2)),
+             "price": money(service.group(3))}, service.group(3),
+        )
+    offer = re.fullmatch(r"[-•]\s+(.+?)\s+[—–-]\s+(.+)", line)
+    if offer:
+        price = offer.group(2)
+        return ParsedItem(
+            {"name": offer.group(1), "qty": None,
+             "price": None if price.lower() in ("не указана", "по запросу") else money(price)}, price,
+        )
     # A table needs tab or >=2-space column boundaries; single spaces group digits.
     cells = re.split(r"\t+| {2,}", line.strip())
     if len(cells) in (3, 4):
         try:
-            return {"name": cells[0], "qty": None if cells[1] == "-" else number(cells[1]),
-                    "price": None if cells[2] == "-" else money(cells[2])}
+            return ParsedItem(
+                {"name": cells[0], "qty": None if cells[1] == "-" else number(cells[1]),
+                 "price": None if cells[2] == "-" else money(cells[2])}, " ".join(cells[2:]),
+            )
         except ValueError:
             return None
-    service = re.fullmatch(rf"(.+?)\s+[-—–]\s+({NUM})\s*(?:ед\.?|шт\.?)\s+[-—–]\s+(.+)", line)
-    if service:
-        return {"name": service.group(1), "qty": number(service.group(2)),
-                "price": money(service.group(3))}
-    offer = re.fullmatch(r"[-•]\s+(.+?)\s+[—–-]\s+(.+)", line)
-    if offer:
-        return {"name": offer.group(1), "qty": None,
-                "price": None if offer.group(2).lower() in ("не указана", "по запросу") else money(offer.group(2))}
     return None
 
 
@@ -69,7 +94,7 @@ def parse_line(field_name: str, raw: str) -> Parsed:
     if field_name == "doc_type":
         if re.match(r"^(?:сч[её]т\b|шот[- ]фактура\b)", lower):
             out.hits.append(Hit("invoice"))
-        elif lower.startswith("коммерческое предложение"):
+        elif re.match(r"^коммерческое предложение\b", lower):
             out.hits.append(Hit("commercial_offer"))
         elif re.match(r"^акт\b", lower):
             out.hits.append(Hit("act"))
@@ -95,10 +120,16 @@ def parse_line(field_name: str, raw: str) -> Parsed:
             out.hits.append(Hit(match.group(1)))
     elif field_name == "doc_date":
         # Dates without issue context remain visible for conflicts, but are not selected.
-        issue = bool(DOC_HEADER.match(line) or re.match(r"^(?:составлено|дата документа|дата составления)\b", lower))
-        expiry = bool(re.search(r"действительно до|срок|оплатить до|дейін", lower))
-        priority = 2 if issue and not expiry else 0
+        issue = bool(DOC_HEADER.match(line))
         for match in DATE.finditer(line):
+            # The closest preceding role marker controls this date, not every date
+            # on the line. A referenced contract is not the current document.
+            date_is_issue = issue
+            for marker in DATE_ROLE.finditer(line, 0, match.start()):
+                date_is_issue = marker.lastgroup == "issue"
+            if re.match(r"\s*(?:ж\.?\s*)?дейін\b", line[match.end():], re.I):
+                date_is_issue = False
+            priority = 2 if date_is_issue else 0
             try:
                 out.hits.append(Hit(calendar_date(match.group()), priority))
             except ValueError:
@@ -109,8 +140,10 @@ def parse_line(field_name: str, raw: str) -> Parsed:
             item = _line_item(line)
         except ValueError:
             item = None
-        if TOTAL.match(line) or re.match(r"^(?:валюта|валютасы)\s*:", lower) or item:
+        if TOTAL.match(line) or re.match(r"^(?:валюта|валютасы)\s*:", lower):
             out.hits.extend(Hit(value) for value in currencies(line))
+        elif item:
+            out.hits.extend(Hit(value) for value in currencies(item.monetary_text))
     elif field_name == "total_amount":
         match = TOTAL.match(line)
         if match:
@@ -139,7 +172,7 @@ def parse_line(field_name: str, raw: str) -> Parsed:
             try:
                 item = _line_item(line)
                 if item:
-                    out.hits.append(Hit(item))
+                    out.hits.append(Hit(item.value))
             except ValueError:
                 out.warnings.append("INVALID_LINE_ITEM: unsupported numeric cells; row ignored")
     return out

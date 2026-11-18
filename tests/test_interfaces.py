@@ -64,6 +64,13 @@ class CliTests(unittest.TestCase):
         self.assertFalse(schema['additionalProperties'])
         self.assertIn('supplier_bin', schema['required'])
 
+    def test_invalid_ollama_url_returns_valid_failure_json(self):
+        result = self.run_cli('extract', 'data/documents/01_invoice.txt', '--backend', 'ollama',
+                              '--model', 'test', '--ollama-url', 'nonsense')
+        self.assertEqual(result.returncode, 2)
+        self.assertIn('PROVIDER_ERROR', Document.model_validate_json(result.stdout).warnings[0])
+        self.assertNotIn(b'Traceback', result.stderr)
+
     def test_eval_writes_report_and_failed_backend_returns_nonzero(self):
         with tempfile.TemporaryDirectory() as tmp:
             target = Path(tmp) / 'report.json'

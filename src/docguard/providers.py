@@ -1,7 +1,9 @@
 """Interchangeable evidence providers; only Ollama performs inference."""
 
 import json
+from http.client import HTTPException
 import urllib.error
+import urllib.parse
 import urllib.request
 from dataclasses import dataclass
 from pathlib import Path
@@ -73,13 +75,20 @@ class OllamaProvider:
             "prompt": json.dumps({"document_lines": text.splitlines(), "validation_feedback": feedback}, ensure_ascii=False),
             "options": {"temperature": 0, "num_predict": 8192},
         }
-        request = urllib.request.Request(
-            self.base_url.rstrip("/") + "/api/generate",
-            data=json.dumps(payload).encode(), headers={"Content-Type": "application/json"},
-        )
         try:
+            endpoint = urllib.parse.urlsplit(self.base_url)
+            if endpoint.scheme not in ("http", "https") or not endpoint.hostname:
+                raise ProviderError("Ollama URL must use HTTP or HTTPS with a hostname")
+            request = urllib.request.Request(
+                self.base_url.rstrip("/") + "/api/generate",
+                data=json.dumps(payload).encode(), headers={"Content-Type": "application/json"},
+            )
             with urllib.request.urlopen(request, timeout=self.timeout) as response:
                 data = response.read(MAX_RESPONSE_BYTES + 1)
+                content_length = getattr(response, "headers", {}).get("Content-Length")
+            # A bounded urllib read can return early EOF without IncompleteRead.
+            if content_length is not None and int(content_length) != len(data):
+                raise ProviderError("incomplete Ollama HTTP response body")
             if len(data) > MAX_RESPONSE_BYTES:
                 raise ProviderError("response exceeds size limit")
             result = json.loads(data)
@@ -88,5 +97,5 @@ class OllamaProvider:
             if result.get("done") is not True:
                 raise ProviderError("incomplete Ollama response")
             return result["response"]
-        except (urllib.error.URLError, TimeoutError, OSError, ValueError) as exc:
+        except (urllib.error.URLError, TimeoutError, OSError, ValueError, HTTPException, RecursionError) as exc:
             raise ProviderError("Ollama request failed or returned invalid JSON") from exc

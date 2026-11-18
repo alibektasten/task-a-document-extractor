@@ -25,12 +25,12 @@ class Metric:
     populated_correct: int = 0
     populated_total: int = 0
 
-    def observe(self, expected, predicted, nullable: bool = False) -> None:
+    def observe(self, expected, predicted, nullable: bool = False, matched: bool = True) -> None:
         self.total += 1
-        self.correct += expected == predicted
+        self.correct += matched and expected == predicted
         if expected is not None:
             self.populated_total += 1
-            self.populated_correct += expected == predicted
+            self.populated_correct += matched and expected == predicted
         if nullable:
             self.hallucinations += expected is None and predicted is not None
             self.omissions += expected is not None and predicted is None
@@ -70,6 +70,7 @@ def score_pairs(pairs: list[tuple[str, Document, Document]], failures: list[str]
                 metrics[f"line_items[].{key}"].observe(
                     left[key] if left else None, right[key] if right else None,
                     nullable=left is not None and right is not None and key != "name",
+                    matched=left is not None and right is not None,
                 )
         if mismatch:
             differences.append({"id": identifier, "fields": mismatch})

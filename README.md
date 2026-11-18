@@ -42,6 +42,7 @@ python -m docguard schema > reports/output.schema.json
 ```
 
 The installed `docguard` command is also available, for example `docguard extract data/documents/01_invoice.txt`.
+On macOS/Linux, after installation you can also run `make PYTHON=.venv/bin/python demo` directly from the project folder without activating the environment. This is a CLI: each command prints its result and exits; there is no web server to keep running.
 
 ## What happens to a document
 
@@ -67,9 +68,9 @@ The provider returns only field names and **1-based source line numbers**, not b
 | Document type | Read the heading, not the number prefix. `Шот-фактура № AKT-09` is an `invoice`. Conflicting recognized types give `unknown` with a warning. |
 | Supplier | Preserve the stated legal form/name; remove only the wrapper `от компании «…»`. Preserve bilingual names as written. Labelled buyer sections are excluded. Conflicting supplier names or valid BINs give `null`. |
 | BIN | Exactly 12 ASCII digits, including leading zeros. No registry lookup, checksum assertion, or substitution of `O/0`, `l/1`. Document 3's damaged BIN stays `null`. |
-| Dates | Parse real calendar dates: dotted day-month-year, ISO, or supported Russian/Kazakh month names. Prefer the first explicitly labelled issue date or heading date. An expiry-only date never becomes `doc_date`. Different recognized dates produce a warning, including issue versus expiry. |
+| Dates | Parse real calendar dates: dotted day-month-year, ISO, or supported Russian/Kazakh month names. Prefer the first explicitly labelled issue date or heading date. The closest preceding role marker distinguishes issue, expiry, and referenced contract dates, including on the same line. An expiry-only or contract-only date never becomes `doc_date`. Different recognized dates produce a warning, including issue versus expiry. |
 | Total | Explicit `Всего к оплате`, `К оплате`, or `Итого к оплате` outranks ordinary `Итого`/`Жалпы сомасы`. At equal priority, the first occurrence in source order wins. Different total-labelled amounts always produce a warning, including subtotal versus payable. |
-| Currency | Only explicit supported currency evidence in a total, parsed item, or currency label. KZT/USD/EUR are supported; no default KZT or ambiguous `$` interpretation. Conflicting currencies give `null`, while a separately explicit numeric total remains available. |
+| Currency | Only explicit supported currency evidence in a total, a parsed item's monetary cells, or a currency label. Currency words in item names are not payment evidence. KZT/USD/EUR are supported; no default KZT or ambiguous `$` interpretation. Conflicting currencies give `null`, while a separately explicit numeric total remains available. |
 | VAT | Extract only an explicit numeric amount. `НДС 16%`, `Без НДС`, and `НДС не облагается` do not imply a numeric amount; return `null` with a warning. Explicit `НДС: 0` is zero. Conflicting numeric VAT amounts give `null`. |
 | Items | Source order is preserved, including identical repeated rows. Never assume quantity 1 or derive price from a line total. Supported formats: table columns separated by tabs or at least two spaces, service rows `name - qty ед. - price`, and offer bullets `- name — price`. `-` in numeric table cells and `по запросу`/`не указана` in an offer price mean `null`. |
 | Amounts in words | Normalize the explicit Russian/Kazakh amount in bounded supported grammar, including numeric tiyn. This is text normalization, not summing items or calculating VAT. Unsupported wording stays `null`. |
@@ -103,7 +104,7 @@ The corpus has **14 documents: the 3 supplied examples and 11 authored examples*
 - **Omissions:** expected non-null, predicted `null`.
 - Wrong non-null values, extra/missing item rows, and failed pipeline runs separately.
 
-Numeric JSON values compare numerically (100 equals 100.0); strings compare exactly; warning order is ignored; items are aligned by source position. Null mistakes are counted over nullable scalar fields and qty/price of matched item rows, without double-counting the enclosing array. Unmatched rows are collection errors, not explicit-null errors. The detailed report also includes accuracy restricted to populated gold values, per-document mismatches, and backend identity. `unknown` is a document-type label, not a null.
+Numeric JSON values compare numerically (100 equals 100.0); strings compare exactly; warning order is ignored; items are aligned by source position. Null mistakes are counted over nullable scalar fields and qty/price of matched item rows, without double-counting the enclosing array. Unmatched rows are collection errors, not explicit-null errors, and every leaf in an unmatched row is scored incorrect even if the expected leaf was null. The detailed report also includes accuracy restricted to populated gold values, per-document mismatches, and backend identity. `unknown` is a document-type label, not a null.
 
 Exit codes: **0** = every expected output matches; **1** = differences or pipeline failures; **2** = invalid corpus, CLI usage, or report-writing failure. Bad gold data stops evaluation rather than disappearing from the denominator.
 
@@ -146,7 +147,7 @@ The external runtime dependency is Pydantic; tests use the Python standard libra
 
 All mandatory Task A deliverables are implemented; [the requirements map](docs/REQUIREMENTS.md) points to the relevant files. Work is intentionally limited to a text CLI: no UI, PDF/OCR ingestion, database, queues, or paid model. The generalization tradeoff is deliberate: unknown layouts, unsupported word grammar, credits/negative amounts, wrapped item rows, and unlabeled organizations may be missed. BIN structure is checked, not legal validity. Binary JSON numbers are used for interchange after decimal parsing; this is not an accounting ledger.
 
-Line-level context is limited: an issue date and expiry on the same line may cause abstention, and buyer-section heuristics can miss a supplier in unusual layouts. The deterministic safety scan covers supported labels only. Schema validation and source references reduce invention but cannot prove that a document itself is truthful or that every cited value has the correct business role. Crafted text that resembles supported labels remains a limitation. Confidence is not a reliability estimate suitable for automatic payment approval.
+Context remains limited to recognized role markers and line layouts: unfamiliar date-role wording can be missed, and buyer-section heuristics can miss a supplier in unusual layouts. The deterministic safety scan covers supported labels only. Schema validation and source references reduce invention but cannot prove that a document itself is truthful or that every cited value has the correct business role. Crafted text that resembles supported labels remains a limitation. Confidence is not a reliability estimate suitable for automatic payment approval.
 
 With more time, prioritize a separately annotated, unseen dataset, a live-model comparison, better role/span evidence, and calibrated abstention thresholds; then extend normalization based on measured errors. There is no reason to add infrastructure before measuring those failure modes.
 
